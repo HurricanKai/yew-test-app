@@ -15,11 +15,11 @@ fn App() -> Html {
         })
     };
 
-    use_effect(move || {
+    use_effect_with_deps(move |_| {
         gloo_utils::document().set_title(&format!("Counter: {}", counter));
 
         || gloo_utils::document().set_title("Counter: 0")
-    });
+    }, counter);
 
     html! {
         <div>
