@@ -15,6 +15,12 @@ fn App() -> Html {
         })
     };
 
+    use_effect(move || {
+        gloo_utils::document().set_title(&format!("Counter: {}", counter));
+
+        || gloo_utils::document().set_title("Counter: 0")
+    });
+
     html! {
         <div>
             <button onclick={onclick}>{ "+1" }</button>
