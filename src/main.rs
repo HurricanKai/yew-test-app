@@ -1,3 +1,4 @@
+use gloo_console::console;
 use yew::prelude::*;
 use std::ops::Deref;
 
@@ -10,7 +11,7 @@ fn App() -> Html {
         Callback::from(move |_| {
             let value = counter + 1;
             counter_handle.set(value);
-            web_sys::console::log_1(&counter.to_string().into());
+            console!(counter.to_string());
         })
     };
 
