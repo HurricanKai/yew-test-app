@@ -12,6 +12,8 @@ pub enum MainRoute {
     Landing,
     #[at("/counter")]
     Counter,
+    #[at("/loading")]
+    Loading,
     #[at("/nested")]
     NestedRoot,
     #[at("/nested/*")]
@@ -25,6 +27,7 @@ fn switch(routes: &MainRoute) -> Html {
     match routes {
         MainRoute::Landing => html! { <Landing />},
         MainRoute::Counter => html! { <Counter /> },
+        MainRoute::Loading => html! { <Loading /> },
         MainRoute::NotFound => html! { <NotFound /> },
         MainRoute::Nested | MainRoute::NestedRoot => html! { <Nested /> },
     }

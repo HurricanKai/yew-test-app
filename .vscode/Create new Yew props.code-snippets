@@ -1,0 +1,7 @@
+{
+  "Create new Yew props": {
+    "prefix": "yew:props",
+    "body": ["#[derive(Properties, PartialEq)]", "pub struct ${1} {", "", "}"],
+    "description": "Create a new Yew props"
+  }
+}
