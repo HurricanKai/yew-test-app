@@ -1,9 +1,11 @@
 mod index;
+mod layout;
 mod page_1;
 mod page_2;
 
 use crate::pages::NotFound;
 use self::index::Index;
+use self::layout::Layout;
 use self::page_1::Page1;
 use self::page_2::Page2;
 
@@ -35,5 +37,9 @@ fn switch(route: &NestedRoute) -> Html {
 #[function_component]
 pub fn Nested() -> Html {
 
-  html! { <Switch<NestedRoute> render={Switch::render(switch)} />}
+  html! {
+        <Layout>
+            <Switch<NestedRoute> render={Switch::render(switch)} />
+        </Layout>
+    }
 }
