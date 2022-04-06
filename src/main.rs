@@ -10,6 +10,10 @@ pub enum MainRoute {
     Landing,
     #[at("/counter")]
     Counter,
+    #[at("/nested")]
+    NestedRoot,
+    #[at("/nested/*")]
+    Nested,
     #[not_found]
     #[at("/404")]
     NotFound,
@@ -20,6 +24,7 @@ fn switch(routes: &MainRoute) -> Html {
         MainRoute::Landing => html! { <Landing />},
         MainRoute::Counter => html! { <Counter /> },
         MainRoute::NotFound => html! { <NotFound /> },
+        MainRoute::Nested | MainRoute::NestedRoot => html! { <Nested /> }
     }
 }
 
