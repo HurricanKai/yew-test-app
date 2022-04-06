@@ -16,7 +16,7 @@ pub fn Landing() -> Html {
           <ul>
               <li><Link<MainRoute> to={MainRoute::Counter}>{"Counter"}</Link<MainRoute>></li>
               <li><Link<MainRoute> to={MainRoute::NestedRoot}>{"Nested"}</Link<MainRoute>></li>
-              <li>{"TODO: Suspense"}</li>
+              <li><Link<MainRoute> to={MainRoute::Loading}>{"Loading (Suspense Delay Demo)"}</Link<MainRoute>></li>
               <li>{"TODO: Portals"}</li>
               <li>{"TODO: SSR"}</li>
           </ul>
