@@ -4,22 +4,15 @@
     "body": [
       "use yew::prelude::*;",
       "",
-	  "#[function_component]",
-	  "pub fn ${1}() -> Html {",
-	  "",
-	  "  html! {",
+      "#[function_component]",
+      "pub fn ${1}() -> Html {",
+      "",
+      "  html! {",
       "    <>",
       "    </>",
       "  }",
-	  "}"
+      "}"
     ],
     "description": "Create a new Yew function component"
   }
 }
-
-
-
-use yew::prelude::*;
-
-#[function_component]
-pub fn Counter() -> Html {
