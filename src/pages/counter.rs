@@ -1,5 +1,6 @@
 use gloo_console::console;
 use yew::prelude::*;
+use crate::utils::use_render_count;
 use std::ops::Deref;
 
 #[function_component]
@@ -14,6 +15,7 @@ pub fn Counter() -> Html {
             console!(counter.to_string());
         })
     };
+    let render_count = use_render_count();
 
     use_effect_with_deps(move |_| {
         gloo_utils::document().set_title(&format!("Counter: {}", counter));
@@ -25,6 +27,7 @@ pub fn Counter() -> Html {
         <div>
             <button onclick={onclick}>{ "+1" }</button>
             <p>{ counter }</p>
+            <p>{"Render Count: "} {render_count}</p>
         </div>
     }
 }

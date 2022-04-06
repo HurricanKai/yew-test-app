@@ -1,4 +1,6 @@
 pub mod pages;
+pub mod components;
+pub mod utils;
 
 use yew::prelude::*;
 use yew_router::prelude::*;
