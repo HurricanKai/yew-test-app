@@ -1,11 +1,11 @@
-use gloo_console::console;
-use yew::prelude::*;
 use crate::utils::use_render_count;
+use gloo_console::console;
 use std::ops::Deref;
+use yew::prelude::*;
 
 #[function_component]
 pub fn Counter() -> Html {
-    let counter_handle : UseStateHandle<i32> = use_state(|| 0);
+    let counter_handle: UseStateHandle<i32> = use_state(|| 0);
     let counter = counter_handle.deref().clone();
     let onclick = {
         let counter = counter.clone();
@@ -17,11 +17,14 @@ pub fn Counter() -> Html {
     };
     let render_count = use_render_count();
 
-    use_effect_with_deps(move |_| {
-        gloo_utils::document().set_title(&format!("Counter: {}", counter));
+    use_effect_with_deps(
+        move |_| {
+            gloo_utils::document().set_title(&format!("Counter: {}", counter));
 
-        || gloo_utils::document().set_title("Counter: 0")
-    }, counter);
+            || gloo_utils::document().set_title("Counter: 0")
+        },
+        counter,
+    );
 
     html! {
         <div>

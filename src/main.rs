@@ -1,10 +1,10 @@
-pub mod pages;
 pub mod components;
+pub mod pages;
 pub mod utils;
 
+use self::pages::*;
 use yew::prelude::*;
 use yew_router::prelude::*;
-use self::pages::*;
 
 #[derive(Clone, Routable, PartialEq)]
 pub enum MainRoute {
@@ -26,7 +26,7 @@ fn switch(routes: &MainRoute) -> Html {
         MainRoute::Landing => html! { <Landing />},
         MainRoute::Counter => html! { <Counter /> },
         MainRoute::NotFound => html! { <NotFound /> },
-        MainRoute::Nested | MainRoute::NestedRoot => html! { <Nested /> }
+        MainRoute::Nested | MainRoute::NestedRoot => html! { <Nested /> },
     }
 }
 

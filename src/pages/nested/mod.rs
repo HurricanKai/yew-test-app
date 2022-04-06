@@ -3,11 +3,11 @@ mod layout;
 mod page_1;
 mod page_2;
 
-use crate::pages::NotFound;
 use self::index::Index;
 use self::layout::Layout;
 use self::page_1::Page1;
 use self::page_2::Page2;
+use crate::pages::NotFound;
 
 use yew::prelude::*;
 use yew_router::prelude::*;
@@ -30,14 +30,13 @@ fn switch(route: &NestedRoute) -> Html {
         NestedRoute::NestedRoot => html! { <Index /> },
         NestedRoute::Page1 => html! { <Page1 /> },
         NestedRoute::Page2 => html! { <Page2 /> },
-        NestedRoute::NotFound => html! { <NotFound /> }
+        NestedRoute::NotFound => html! { <NotFound /> },
     }
 }
 
 #[function_component]
 pub fn Nested() -> Html {
-
-  html! {
+    html! {
         <Layout>
             <Switch<NestedRoute> render={Switch::render(switch)} />
         </Layout>
