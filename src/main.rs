@@ -1,31 +1,34 @@
-use gloo_console::console;
+pub mod pages;
+
 use yew::prelude::*;
-use std::ops::Deref;
+use yew_router::prelude::*;
+use self::pages::*;
+
+#[derive(Clone, Routable, PartialEq)]
+pub enum MainRoute {
+    #[at("/")]
+    Landing,
+    #[at("/counter")]
+    Counter,
+    #[not_found]
+    #[at("/404")]
+    NotFound,
+}
+
+fn switch(routes: &MainRoute) -> Html {
+    match routes {
+        MainRoute::Landing => html! { <Landing />},
+        MainRoute::Counter => html! { <Counter /> },
+        MainRoute::NotFound => html! { <NotFound /> },
+    }
+}
 
 #[function_component]
 fn App() -> Html {
-    let counter_handle : UseStateHandle<i32> = use_state(|| 0);
-    let counter = counter_handle.deref().clone();
-    let onclick = {
-        let counter = counter.clone();
-        Callback::from(move |_| {
-            let value = counter + 1;
-            counter_handle.set(value);
-            console!(counter.to_string());
-        })
-    };
-
-    use_effect_with_deps(move |_| {
-        gloo_utils::document().set_title(&format!("Counter: {}", counter));
-
-        || gloo_utils::document().set_title("Counter: 0")
-    }, counter);
-
     html! {
-        <div>
-            <button onclick={onclick}>{ "+1" }</button>
-            <p>{ counter }</p>
-        </div>
+        <BrowserRouter>
+            <Switch<MainRoute> render={Switch::render(switch)} />
+        </BrowserRouter>
     }
 }
 
