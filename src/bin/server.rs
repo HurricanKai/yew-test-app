@@ -29,7 +29,7 @@ async fn main() -> std::io::Result<()> {
             .route("/counter", web::get().to(index))
             .route("/loading", web::get().to(index))
             .route("/nested", web::get().to(index))
-            .route("/nested/*", web::get().to(index))
+            .route("/nested/{tail:.*}", web::get().to(index))
             .route("/404", web::get().to(index))
             .default_service(actix_files::Files::new("/*", "./dist"))
     })
