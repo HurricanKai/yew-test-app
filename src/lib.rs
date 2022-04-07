@@ -3,7 +3,9 @@ pub mod pages;
 pub mod utils;
 
 use self::pages::*;
+
 use yew::prelude::*;
+use yew_router::history::{AnyHistory, History, MemoryHistory};
 use yew_router::prelude::*;
 
 #[derive(Clone, Routable, PartialEq)]
@@ -38,14 +40,42 @@ fn switch(routes: &MainRoute) -> Html {
 }
 
 #[function_component]
+fn Layout() -> Html {
+    html! {
+        <Switch<MainRoute> render={Switch::render(switch)} />
+    }
+}
+
+#[function_component]
 pub fn App() -> Html {
     let fallback = html! {<div>{"Loading..."}</div>};
 
     html! {
         <Suspense {fallback}>
             <BrowserRouter>
-                <Switch<MainRoute> render={Switch::render(switch)} />
+                <Layout />
             </BrowserRouter>
+        </Suspense>
+    }
+}
+
+#[derive(Properties, PartialEq, Debug)]
+pub struct ServerAppProps {
+    pub history: String,
+}
+
+#[function_component]
+pub fn ServerApp(props: &ServerAppProps) -> Html {
+    let history = AnyHistory::from(MemoryHistory::new());
+    history.push(&*props.history);
+
+    let fallback = html! {<div>{"Loading..."}</div>};
+
+    html! {
+        <Suspense {fallback}>
+            <Router {history}>
+                <Layout />
+            </Router>
         </Suspense>
     }
 }
