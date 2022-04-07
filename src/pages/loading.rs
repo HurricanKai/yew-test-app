@@ -16,7 +16,7 @@ struct DelayedProps {
 
 // thanks @WorldSEnder for the improved delay hook
 #[hook]
-fn use_delay(ms: u32) -> SuspensionResult<()> {
+fn use_delay(ms: u32) -> SuspensionResult<bool> {
     enum TriggerState {
         Done,
         // I couldn't find a way to tie the knot here.
@@ -24,22 +24,36 @@ fn use_delay(ms: u32) -> SuspensionResult<()> {
         Initial,
         Waiting(SuspensionHandle),
     }
+    let is_initialized = use_state(|| false);
     let trigger_state = use_mut_ref(|| TriggerState::Initial);
-    let _timeout = {
+    {
+        let is_initialized = is_initialized.clone();
         let trigger_state = trigger_state.clone();
-        use_state(move || {
-            Timeout::new(ms, move || {
-                match replace(trigger_state.borrow_mut().deref_mut(), TriggerState::Done) {
-                    TriggerState::Done | TriggerState::Initial => unreachable!("Impossible!"),
-                    TriggerState::Waiting(handle) => handle.resume(),
+        use_effect_with_deps(
+            move |_| {
+                let timeout = Timeout::new(ms, move || {
+                    match replace(trigger_state.borrow_mut().deref_mut(), TriggerState::Done) {
+                        TriggerState::Done | TriggerState::Initial => unreachable!("Impossible!"),
+                        TriggerState::Waiting(handle) => handle.resume(),
+                    }
+                });
+                is_initialized.set(true);
+
+                || {
+                    timeout.cancel();
                 }
-            })
-        })
+            },
+            (),
+        );
     };
+
+    if !*is_initialized {
+        return Ok(true);
+    }
 
     let mut trigger_state = trigger_state.borrow_mut();
     if let TriggerState::Done = *trigger_state {
-        Ok(())
+        Ok(false)
     } else {
         let (suspense, handle) = Suspension::new();
         *trigger_state = TriggerState::Waiting(handle);
@@ -49,7 +63,13 @@ fn use_delay(ms: u32) -> SuspensionResult<()> {
 
 #[function_component]
 fn Delayed(props: &DelayedProps) -> HtmlResult {
-    let _delay = use_delay(props.delay)?;
+    let is_server_side = use_delay(props.delay)?;
+
+    if is_server_side {
+        return Ok(html! {
+          {"Please wait while your client loads..."}
+        });
+    }
 
     let fallback = html! { {"Loading Rec"} };
 
