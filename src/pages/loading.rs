@@ -1,7 +1,11 @@
-use gloo_console::console;
 use gloo_timers::callback::Timeout;
 use rand::Rng;
-use yew::{prelude::*, suspense::Suspension, suspense::SuspensionResult};
+use std::mem::replace;
+use std::ops::DerefMut;
+use yew::{
+    prelude::*,
+    suspense::{Suspension, SuspensionHandle, SuspensionResult},
+};
 
 use crate::utils::use_render_count;
 
@@ -10,35 +14,37 @@ struct DelayedProps {
     delay: u32,
 }
 
+// thanks @WorldSEnder for the improved delay hook
 #[hook]
-fn use_delay(ms: u32) -> SuspensionResult<u32> {
-    #[derive(Clone, Copy)]
-    enum State {
-        Idle,
-        Waiting,
+fn use_delay(ms: u32) -> SuspensionResult<()> {
+    enum TriggerState {
         Done,
+        // I couldn't find a way to tie the knot here.
+        // This state exists only during the first initialization.
+        Initial,
+        Waiting(SuspensionHandle),
     }
-
-    let (s, handle) = Suspension::new();
-    let state = use_mut_ref(|| State::Idle);
-    let current_state = *state.borrow();
-
-    let res = match current_state {
-        State::Idle => {
-            *state.borrow_mut() = State::Waiting;
-            console!(format!("Starting Timeout for {}ms", ms));
-            let timeout = Timeout::new(ms, move || {
-                handle.resume();
-                *state.borrow_mut() = State::Done;
-                console!(format!("Timeout Complete {}ms", ms));
-            });
-            timeout.forget(); // TODO: Figure out how to cleanup here
-            Err(s)
-        }
-        State::Waiting => Err(s),
-        State::Done => Ok(1),
+    let trigger_state = use_mut_ref(|| TriggerState::Initial);
+    let _timeout = {
+        let trigger_state = trigger_state.clone();
+        use_state(move || {
+            Timeout::new(ms, move || {
+                match replace(trigger_state.borrow_mut().deref_mut(), TriggerState::Done) {
+                    TriggerState::Done | TriggerState::Initial => unreachable!("Impossible!"),
+                    TriggerState::Waiting(handle) => handle.resume(),
+                }
+            })
+        })
     };
-    res
+
+    let mut trigger_state = trigger_state.borrow_mut();
+    if let TriggerState::Done = *trigger_state {
+        Ok(())
+    } else {
+        let (suspense, handle) = Suspension::new();
+        *trigger_state = TriggerState::Waiting(handle);
+        Err(suspense)
+    }
 }
 
 #[function_component]
