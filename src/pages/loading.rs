@@ -45,9 +45,18 @@ fn use_delay(ms: u32) -> SuspensionResult<u32> {
 fn Delayed(props: &DelayedProps) -> HtmlResult {
     let _delay = use_delay(props.delay)?;
 
+    let fallback = html! { {"Loading Rec"} };
+
     Ok(html! {
       <>
         {"Delay of "} { props.delay } {" completed"}
+        <ul>
+          <li>
+            <Suspense fallback={fallback}>
+              <Delayed delay={10000} />
+            </Suspense>
+          </li>
+        </ul>
       </>
     })
 }
@@ -68,17 +77,17 @@ pub fn Loading() -> Html {
         <p>{"This demonstrates Suspense by creating multiple components that load in after some time (indicated by the fallback)"}</p>
         <p>{"Render Count:"}{render_count}</p>
         <hr />
-        <div>
+        <ul>
           { for (*elements).iter().map(|e| {
             html! {
-              <p>
+              <li>
                 <Suspense fallback={fallback(e)}>
                   <Delayed delay={e} />
                 </Suspense>
-              </p>
+              </li>
             }
           })}
-        </div>
+        </ul>
       </>
     }
 }
